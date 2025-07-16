@@ -9,10 +9,7 @@ namespace HR.Model
         public long Id { get; set; }
         [MaxLength(50)]
         public string Name { get; set; }
-        //public DateTime? BirthDate { get; set; }
-        public int? Age { get; set; }
-        [MaxLength(50)]
-        public string Position { get; set; }
+        public DateTime? BirthDate { get; set; }
         [MaxLength(50)]
         public String? Phone { get; set; }
         public bool IsActive { get; set; }
@@ -26,6 +23,10 @@ namespace HR.Model
         [ForeignKey("ManagerRow")]
         public long? ManagerId { get; set; }
         public Employee? ManagerRow { get; set; }
-        
+
+        [ForeignKey("LookUp")]
+        public long? PositionId { get; set; }
+        public LookUp? LookUp { get; set; }
+
     }
 }

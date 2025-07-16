@@ -24,7 +24,10 @@ namespace HR.Controllers
             var data = from employee   in _dbContext.Employees
                        from department in _dbContext.Departments.Where(x=>  x.Id == employee.Id).DefaultIfEmpty()      //Left Join
                        from manager    in _dbContext.Employees.Where(x => employee.ManagerId == x.Id).DefaultIfEmpty() //Self Join
-                       where (filterDto.Position == null || employee.Position.ToLower().Contains(filterDto.Position.ToLower())) &&              // Filter by Postion or return all if postion is null
+                       from lookup     in _dbContext.LookUps.Where(x=> x.Id == employee.PositionId).DefaultIfEmpty()   //Left Join
+
+                       where 
+                             (filterDto.PositionId == null || employee.PositionId == filterDto.PositionId) &&          // Filter by Postion or return all if postion is null
                              (filterDto.Name == null || employee.Name.ToLower().Contains(filterDto.Name.ToLower()))&&
                              (filterDto.IsActive == null || employee.IsActive == filterDto.IsActive)
                        orderby employee.Id
@@ -32,8 +35,9 @@ namespace HR.Controllers
                          {
                              Id             = employee.Id,
                              Name           = employee.Name,
-                             Position       = employee.Position,
-                             Age            = employee.Age,
+                             PositionId     = employee.PositionId,
+                             PositionName   = lookup.Name,
+                             BirthDate      = employee.BirthDate,
                              IsActive       = employee.IsActive,
                              StartDate      = employee.StartDate,
                              Phone          = employee.Phone,
@@ -52,8 +56,9 @@ namespace HR.Controllers
             {
                 Id             = employee.Id,
                 Name           = employee.Name,
-                Position       = employee.Position,
-                Age            = employee.Age,
+                PositionId     = employee.PositionId,
+                PositionName   = employee.LookUp.Name,
+                BirthDate      = employee.BirthDate,
                 IsActive       = employee.IsActive,
                 StartDate      = employee.StartDate,
                 Phone          = employee.Phone,
@@ -74,8 +79,8 @@ namespace HR.Controllers
             {
                 Id           = 0, //Ignored, If it is any number other than 0, the database will be forced to take it
                 Name         = employeeDto.Name,
-                Age          = employeeDto.Age,
-                Position     = employeeDto.Postion,
+                BirthDate    = employeeDto.BirthDate,
+                PositionId   = employeeDto.PositionId,
                 IsActive     = employeeDto.IsActive,
                 StartDate    = employeeDto.StartDate,
                 DepartmentId = employeeDto.DepartmentId,
@@ -97,8 +102,8 @@ namespace HR.Controllers
                 return BadRequest("Employee not found");
 
             employee.Name         = employeeDto.Name;
-            employee.Age          = employeeDto.Age;
-            employee.Position     = employeeDto.Postion;
+            employee.BirthDate    = employeeDto.BirthDate;
+            employee.PositionId   = employeeDto.PositionId;
             employee.IsActive     = employeeDto.IsActive;
             employee.StartDate    = employeeDto.StartDate;
             employee.EndDate      = employeeDto.EndDate;

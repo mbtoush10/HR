@@ -28,5 +28,10 @@ namespace HR.Model
         public long? PositionId { get; set; }
         public LookUp? LookUp { get; set; }
 
+        [ForeignKey("User")]
+        public long? UserId { get; set; }
+        public User? User { get; set; }
+
+
     }
 }

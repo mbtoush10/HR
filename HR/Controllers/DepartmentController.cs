@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using HR.DTOs.Department;
 using HR.Model;
-using HR.DTOs.Department;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System.Xml.Linq;
+using static Azure.Core.HttpHeader;
 
 namespace HR.Controllers
 {
@@ -19,40 +20,51 @@ namespace HR.Controllers
         [HttpGet("GetAll")]
         public IActionResult GetAll([FromQuery] FilterDepartmentDto filter)
         {
-            var data = _dbContext.Departments.Where(x => (filter.Name == null || x.Name.ToLower().Contains(filter.Name.ToLower())) &&
-                                                          (filter.Description == null || x.Description.ToUpper().Contains(filter.Description.ToUpper())) &&
-                                                          (filter.FloorNumber == null || x.FloorNumber == filter.FloorNumber))
-                                    .Select(x => new DepartmentDto
-                                    {
-                                        Id = x.Id,
-                                        Name = x.Name,
-                                        Description = x.Description,
-                                        FloorNumber = x.FloorNumber
-                                    });
+            var data = from department in _dbContext.Departments
+                        from lookup in _dbContext.LookUps.Where(x => x.Id == department.TypeId).DefaultIfEmpty()
+                        where
+                            (filter.Name == null || department.Name.ToLower().Contains(filter.Name.ToLower())) &&
+                            (filter.Description == null || department.Description.ToUpper().Contains(filter.Description.ToUpper())) &&
+                            (filter.FloorNumber == null || department.FloorNumber == filter.FloorNumber)
+                        select new DepartmentDto
+                        { 
+                            Id          = department.Id,
+                            Name        = department.Name,
+                            Description = department.Description,
+                            FloorNumber = department.FloorNumber,
+                            TypeId      = department.TypeId,
+                            TypeName    = lookup.Name,
+                        };
+
             return Ok(data);
         }
+
         [HttpGet("GetById")]
         public IActionResult GetById([FromQuery] long id)
         {
             var data = _dbContext.Departments.Select(x => new DepartmentDto
             {
-                Id = x.Id,
-                Name = x.Name,
+                Id          = x.Id,
+                Name        = x.Name,
                 Description = x.Description,
-                FloorNumber = x.FloorNumber
+                FloorNumber = x.FloorNumber,
+                TypeId      = x.LookUp.Id,
+                TypeName    = x.LookUp.Name,
             }).FirstOrDefault(x => x.Id == id);
 
             return Ok(data);
         }
+
         [HttpPost("Add")]
-        public IActionResult Add([FromBody] SaveDepartmentDto department)
+        public IActionResult Add([FromBody] SaveDepartmentDto departmentDto)
         {
             var newdepartment = new Department
             {
-                Id = 0,
-                Name = department.Name,
-                Description = department.Description,
-                FloorNumber = department.FloorNumber
+                Id          = 0,
+                Name        = departmentDto.Name,
+                Description = departmentDto.Description,
+                FloorNumber = departmentDto.FloorNumber,
+                TypeId      = departmentDto.TypeId
             };
             _dbContext.Departments.Add(newdepartment);
             _dbContext.SaveChanges();
@@ -67,9 +79,10 @@ namespace HR.Controllers
             if (data == null)
                 return BadRequest("Shaker");
 
-            data.Name = department.Name;
+            data.Name        = department.Name;
             data.Description = department.Description;
             data.FloorNumber = department.FloorNumber;
+            data.TypeId      = department.TypeId;
 
             _dbContext.SaveChanges();
             return Ok(data);

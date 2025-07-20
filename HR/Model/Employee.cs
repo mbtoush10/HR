@@ -18,19 +18,19 @@ namespace HR.Model
 
         [ForeignKey("DepartmentRow")]
         public long? DepartmentId { get; set; }
-        public Department? DepartmentRow { get; set; }//Navigation proparty
+        public Department? DepartmentRow { get; set; } // Navigation proparty
 
         [ForeignKey("ManagerRow")]
         public long? ManagerId { get; set; }
-        public Employee? ManagerRow { get; set; }
+        public Employee? ManagerRow { get; set; } // Navigation proparty
 
         [ForeignKey("LookUp")]
         public long? PositionId { get; set; }
-        public LookUp? LookUp { get; set; }
+        public LookUp? LookUp { get; set; } // Navigation proparty
 
         [ForeignKey("User")]
         public long? UserId { get; set; }
-        public User? User { get; set; }
+        public User? User { get; set; } // Navigation proparty
 
 
     }

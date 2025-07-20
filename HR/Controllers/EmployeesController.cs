@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using HR.Model;
 using HR.DTOs.Employees;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HR.Controllers
 {
+    [Authorize]
     [Route("api/Employees")] // --> Data Anonotation
     [ApiController]          // --> Data Anonotation
     public class EmployeesController : ControllerBase
@@ -17,7 +19,7 @@ namespace HR.Controllers
         {
             _dbContext = dbContext; // Dependency Injection (DI) to get the DbContext instance
         }
-
+        [Authorize(Roles = "HR, Admin")]
         [HttpGet("GetAll")] // --> Data Anonotation
         public IActionResult GetAll([FromQuery]FilterEmployeeDto filterDto)// postion is Optional
         {
@@ -75,6 +77,15 @@ namespace HR.Controllers
         [HttpPost("Add")] // --> Request body
         public IActionResult Add( SaveEmployeeDto employeeDto)
         {
+            var user = new User()
+            {
+                Id             = 0,
+                UserName       = $"{employeeDto.Name}_Hr",
+                HashedPassword = BCrypt.Net.BCrypt.HashPassword($"{employeeDto.Name}@123"),
+                IsAdmin        = false
+            };
+            _dbContext.Users.Add(user);
+
             var employee = new Employee()
             {
                 Id           = 0, //Ignored, If it is any number other than 0, the database will be forced to take it
@@ -85,12 +96,13 @@ namespace HR.Controllers
                 StartDate    = employeeDto.StartDate,
                 DepartmentId = employeeDto.DepartmentId,
                 ManagerId    = employeeDto.ManagerId,
+                User         = user,
             };
 
             _dbContext.Employees.Add(employee);
             _dbContext.SaveChanges();
 
-            return Ok(employee);
+            return Ok();
         }
 
         [HttpPut("Update")] // --> Request body

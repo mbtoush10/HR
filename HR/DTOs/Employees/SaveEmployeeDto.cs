@@ -12,5 +12,6 @@
         public long? DepartmentId { get; set; }
         public long? ManagerId { get; set; }
 
+
     }
 }

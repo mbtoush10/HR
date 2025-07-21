@@ -26,7 +26,13 @@ namespace HR
                 new LookUp { Id = 5, MajorCode = 1, MinorCode = 0, Name = "Department Types" },
                 new LookUp { Id = 6, MajorCode = 1, MinorCode = 1, Name = "Finance" },
                 new LookUp { Id = 7, MajorCode = 1, MinorCode = 2, Name = "Adminstrative" },
-                new LookUp { Id = 8, MajorCode = 1, MinorCode = 3, Name = "Technical" }
+                new LookUp { Id = 8, MajorCode = 1, MinorCode = 3, Name = "Technical" },
+
+                // Vacation Types (Major Code = 2)
+                new LookUp { Id = 9, MajorCode = 2, MinorCode = 0, Name = "Vacation Types" },
+                new LookUp { Id = 10, MajorCode = 2, MinorCode = 1, Name = "Annual Vacation" },
+                new LookUp { Id = 11, MajorCode = 2, MinorCode = 2, Name = "Sick Vacation" },
+                new LookUp { Id = 12, MajorCode = 2, MinorCode = 3, Name = "Unpaid Vacation" }
                 );
             //            BCrypt.Net.BCrypt.HashPassword("Admin@123") = $2a$11$hFf72xIWP7J38ZOeduZVtOnjl4eYvWdB5IEgKDMRYQ1OXqJZAMA0u // Work Around for seeding hashed password ;)
             modelBuilder.Entity<User>().HasData(
@@ -42,5 +48,6 @@ namespace HR
         public DbSet<Department> Departments { get; set; }
         public DbSet<LookUp> LookUps { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Vacation> Vacations { get; set; }
     }
 }

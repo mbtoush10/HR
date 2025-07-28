@@ -113,5 +113,21 @@ namespace HR.Controllers
             _dbContext.SaveChanges();
             return Ok();
         }
+        [HttpPost("EmployeeVacationCount")]
+        public IActionResult EmployeeVacationCount()
+        {
+            var data = from emp in _dbContext.Employees
+                       from vac in _dbContext.Vacations.Where(x => x.EmployeeId == emp.Id)
+                       group new { Employee = emp, Vacation = vac } // Grouping by employee and vacation
+                       by new { Id = emp.Id, Name = emp.Name }      // Grouping by key (employee Id and Name)
+                       into vacationCount                           // Creating a group for each employee
+                       select new VacationsCountDto
+                       {
+                           EmployeeId = vacationCount.Key.Id,
+                           EmployeeName = vacationCount.Key.Name,
+                           VacationCount = vacationCount.ToList().Count(x => x.Vacation != null) // Counting the number of vacations for each employee
+                       };
+            return Ok(data);
+        }
     }
 }

@@ -42,7 +42,7 @@ namespace HR.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Department Does not exist"); // 400
+                return BadRequest(ex.Message); // 400
             }
         }
 
@@ -66,7 +66,7 @@ namespace HR.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Department Does not exist"); // 400
+                return BadRequest(ex.Message); // 400
             }
         }
 
@@ -91,7 +91,7 @@ namespace HR.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Department Does not exist"); // 400
+                return BadRequest(ex.Message); // 400
             }
         }
         [HttpPut("Update")]
@@ -113,8 +113,8 @@ namespace HR.Controllers
                 return Ok(data); // 200
             }
             catch (Exception ex){ // General Exception
-            
-                return BadRequest("Department Does not exist"); // 400
+             
+                return BadRequest(ex.Message); // 400
             }
         }
 
@@ -135,7 +135,7 @@ namespace HR.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Department Does not exist"); // 400
+                return BadRequest(ex.Message); // 400
             }
         }
     }

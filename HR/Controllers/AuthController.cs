@@ -42,7 +42,7 @@ namespace HR.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Department Does not exist"); // 400
+                return BadRequest(ex.Message); // 400
             }
         }
 

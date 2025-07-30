@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HR.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/Employees")] // --> Data Anonotation
     [ApiController]          // --> Data Anonotation
     public class EmployeesController : ControllerBase
@@ -54,7 +54,7 @@ namespace HR.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Department Does not exist"); // 400
+                return BadRequest(ex.Message); // 400
             }
         }
 
@@ -84,7 +84,7 @@ namespace HR.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Department Does not exist"); // 400
+                return BadRequest(ex.Message); // 400
             }
         }
 
@@ -100,6 +100,11 @@ namespace HR.Controllers
                     HashedPassword = BCrypt.Net.BCrypt.HashPassword($"{employeeDto.Name}@123"),
                     IsAdmin = false
                 };
+
+                var _user = _dbContext.Users.FirstOrDefault(x => x.UserName.ToLower()== user.UserName.ToLower());
+                if (_user != null)
+                    return BadRequest("Cannot add employee, user already exists");
+
                 _dbContext.Users.Add(user);
 
                 var employee = new Employee()
@@ -122,7 +127,7 @@ namespace HR.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Department Does not exist"); // 400
+                return BadRequest(ex.Message); // 400
             }
         }
 
@@ -151,7 +156,7 @@ namespace HR.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Department Does not exist"); // 400
+                return BadRequest(ex.Message); // 400
             }
         }
 
@@ -171,7 +176,7 @@ namespace HR.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Department Does not exist"); // 400
+                return BadRequest(ex.Message); // 400
             }
         }
     }

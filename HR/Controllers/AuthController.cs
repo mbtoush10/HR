@@ -24,20 +24,26 @@ namespace HR.Controllers
         [HttpPost("Login")]
         public IActionResult LogIn([FromBody] LogInDto loginDto)
         {
+            try
+            {
+                var user = _dbContext.Users.FirstOrDefault(x => x.UserName.ToLower() == loginDto.UserName.ToLower());
 
-            var user = _dbContext.Users.FirstOrDefault(x => x.UserName.ToLower() == loginDto.UserName.ToLower());
+                // Check if user exists
+                if (user == null)
+                    return BadRequest("Invalid UserName or Password");
 
-            // Check if user exists
-            if (user == null)
-                return BadRequest("Invalid UserName or Password");
+                // Check if password matches
+                if (!BCrypt.Net.BCrypt.Verify(loginDto.Password, user.HashedPassword))
+                    return BadRequest("Invalid UserName or Password");
 
-            // Check if password matches
-            if (!BCrypt.Net.BCrypt.Verify(loginDto.Password, user.HashedPassword))
-                return BadRequest("Invalid UserName or Password");
+                var token = GenerateJwtToken(user);
 
-            var token = GenerateJwtToken(user);
-
-            return Ok(token);
+                return Ok(token);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Department Does not exist"); // 400
+            }
         }
 
         private string GenerateJwtToken(User user)

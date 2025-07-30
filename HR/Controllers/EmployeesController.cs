@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HR.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/Employees")] // --> Data Anonotation
     [ApiController]          // --> Data Anonotation
     public class EmployeesController : ControllerBase

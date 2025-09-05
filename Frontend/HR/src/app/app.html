@@ -1,0 +1,56 @@
+<!-- <div *ngFor="let stu of students; index as i">
+  <span>{{i+1}}. </span>
+  <span style="margin-right: 5px">Name: {{ stu.name }}</span>
+  <span style="margin-right: 5px">Mark: {{ stu.mark }}%</span>
+  <span *ngIf="stu.mark >= 50">Passed</span>
+  <span *ngIf="stu.mark < 50">Failed</span>
+</div>
+
+Structural Directives: *ngIf, *ngFor, *ngSwitch -->
+<!-- Attribute Directives: [ngClass], [ngStyle] -->
+
+<div class="title">Angular Before v.17</div>
+<div *ngFor="let stu of students; index as i">
+  <span>{{ i + 1 }}. </span>
+  <span
+    style="margin-right: 5px"
+    [ngClass]="{ passed: stu.mark >= 50, failed: stu.mark < 50 }"
+    >{{ stu.name }}</span
+  >
+  <span
+    style="margin-right: 5px"
+    [ngStyle]="{ color: stu.mark >= 50 ? 'green' : 'red' }"
+    >{{ stu.mark }}%</span
+  >
+  <span *ngIf="stu.mark >= 50">Passed</span>
+  <span *ngIf="stu.mark < 50">Failed</span>
+</div>
+
+<br />
+<br />
+<br />
+<br />
+
+<div class="title">Angular After v.17</div>
+
+@for(stu of students; track students; let i =$index){
+<div>
+  <span>{{ i + 1 }}. </span>
+  <span style="margin-right: 5px">Name: {{ stu.name }}</span>
+  <span style="margin-right: 5px">Mark: {{ stu.mark }}%</span>
+  @if(stu.mark >= 50)
+  {
+    <span>Passed</span>
+  } 
+  @else if(stu.mark < 50)
+  {
+    <span>Failed</span>
+  }
+  @else 
+  {
+    <span>Failed</span>
+  }
+</div>
+}
+
+<!-- Control Flow: @if, @for, @switch, @case, @default -->

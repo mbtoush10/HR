@@ -1,0 +1,13 @@
+.title{
+    font-size: 20px;
+    font-weight: 600px;
+    color:darkgreen;
+}
+.passed{
+    font-weight: 600px;
+    color:green;
+}
+.failed{
+    font-weight: 600px;
+    color:red;
+}

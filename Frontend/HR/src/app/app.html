@@ -34,7 +34,7 @@ Structural Directives: *ngIf, *ngFor, *ngSwitch -->
 
 <div>Angular After v.17</div>
 
-@for(stu of students; track students; let i =$index){
+@for(stu of students; track stu; let i =$index){
 <div>
   <span>{{ i + 1 }}. </span>
   <span
@@ -154,6 +154,15 @@ Structural Directives: *ngIf, *ngFor, *ngSwitch -->
         [class.requited-input-warning]="form.get('name')?.invalid && form.get('name')?.touched"
       />
     </div>
+    @if(form.get('name')?.invalid && form.get('name')?.touched)
+      {
+        @if(form.get('name')?.errors?.['required'])
+        {
+          <div class="invalid-input-message" >
+           * Name is required
+          </div>
+        }
+      }
   </div>
   <div class="question">
     <div class="title">
@@ -168,22 +177,58 @@ Structural Directives: *ngIf, *ngFor, *ngSwitch -->
         [class.requited-input-warning]="form.get('phone')?.invalid && form.get('phone')?.touched"
       />
     </div>
+    @if(form.get('phone')?.invalid && form.get('phone')?.touched)
+      {
+        @if(form.get('phone')?.errors?.['required'])
+        {
+          <div class="invalid-input-message" >
+           * Phone is required
+          </div>
+        }
+        @else if(form.get('phone')?.errors?.['minlength'])
+        {
+          <div class="invalid-input-message">
+               * Invalid Phone must be least 9 digits
+          </div>
+        }
+        @else if(form.get('phone')?.errors?.['maxlength'])
+        {
+          <div class="invalid-input-message">
+               * Invalid Phone must be more than 10 digits
+          </div>
+        }
+        
+      }
   </div>
   <div class="question">
     <div class="title">
       <label for="cours"> Courses <span class="warning">*</span> </label>
     </div>
     <div class="question-input">
-      <select id="course" formControlName="course">
+      <select id="course" formControlName="course" 
+      [class.requited-input-warning]="form.get('course')?.invalid && form.get('course')?.touched">
         @for(course of courses; track course)
         {
         <option [value]="course.id">{{ course.name }}</option>
         }
       </select>
     </div>
+    @if(form.get('course')?.invalid && form.get('course')?.touched)
+      {
+        @if(form.get('course')?.errors?.['required'])
+        {
+          <div class="invalid-input-message" >
+           * course is required
+          </div>
+        }
+      }
   </div>
   <div class="action">
-    <button type="button" class="submit buttun" [class.disabled-button]="!form.valid" [disabled]="!form.valid">Submit</button>
+    <button type="button" class="submit buttun" 
+    [class.disabled-button]="!form.valid" 
+    [disabled]="!form.valid"
+    (click)="submit()"
+    >Submit</button>
     <button type="button" class="reset buttun" (click)="reset()">Clear Form</button>
   </div>
 </form>
@@ -195,8 +240,18 @@ Structural Directives: *ngIf, *ngFor, *ngSwitch -->
   </p>
   <p class="logo">Google Form</p>
 </div>
-<!-- <div class="container">
-  <div class="box">box1</div>
-  <div class="box">box2</div>
-  <div class="box">box3</div>
-</div> -->
+<div class="title">
+  Price: {{price | currency:'USD'}}
+</div>
+<div class="title">
+  Price: {{creationDate | date:'dd/MMM/yyyy HH:mm:ss'}}
+</div>
+<div class="title">
+  LowerCase: {{"Angular" | lowercase}}
+</div>
+<div class="title">
+  UpperCase: {{"Angular" | uppercase}}
+</div>
+<div class="title">
+  Reverse: {{value | reverse}}
+  </div>

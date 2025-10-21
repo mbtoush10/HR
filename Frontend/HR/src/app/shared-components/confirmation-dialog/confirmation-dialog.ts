@@ -13,7 +13,7 @@ export class ConfirmationDialog {
 
   @Output() confim = new EventEmitter<boolean>();
   
-  confirmDelete( isConfirmed: boolean){
+  confirmDelete(isConfirmed: boolean){
     this.confim.emit(isConfirmed); // Activate confirm event and pass value to Parent Component
   }
   

@@ -295,7 +295,7 @@ export class Employees {
     this.paginationConfig.currentPage = pageNumber;
   }
 
-  showConfirmaDialog(empId: number){
+  showConfirmDialog(empId: number){
     this.employeeIdToDelete     = empId; // Save Employee Id to be used later
     this.showConfirmationDialog = true;  // Show Confirmation Dialog
   }

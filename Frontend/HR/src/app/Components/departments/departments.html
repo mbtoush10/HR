@@ -91,7 +91,7 @@
                   <i class="bi bi-pencil-fill"></i>
                 </button>
 
-                <button (click)="removeDepartment(department.id)" type="button" class="btn btn-outline-danger mx-2" >
+                <button (click)="showConfirmDialog(department.id)" type="button" class="btn btn-outline-danger mx-2" >
                   <i class="bi bi-trash-fill"></i>
                 </button>
               </td>
@@ -154,3 +154,9 @@
     </div>
   </div>
 </div>
+
+@if(showConfirmationDialog){
+<app-confirmation-dialog [title]="deleteDialogBody" [body]="deleteDialogBody"
+(confim)="confirmEmployeeDelete($event)"
+> </app-confirmation-dialog>
+}

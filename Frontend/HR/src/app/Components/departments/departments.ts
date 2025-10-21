@@ -4,10 +4,11 @@ import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { DatePipe } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Department } from '../../interfaces/department-interface'
+import { ConfirmationDialog } from '../../shared-components/confirmation-dialog/confirmation-dialog';
 
 @Component({
   selector: 'app-departments',
-  imports: [CommonModule, ReactiveFormsModule, NgxPaginationModule],
+  imports: [CommonModule, ReactiveFormsModule, NgxPaginationModule, ConfirmationDialog],
   providers: [DatePipe],
   templateUrl: './departments.html',
   styleUrls: ['./departments.css']
@@ -52,6 +53,11 @@ export class Departments {
     itemsPerPage: 5,
     currentPage: 1,
   };
+
+  deleteDialogTitle: string           = 'Delete Confirmation';
+  deleteDialogBody: string            = 'Are you sure you want to delete this department?';
+  showConfirmationDialog: boolean     = false;
+  departmentIdToDelete: number | null = null;
 
   constructor(private _datePipe: DatePipe) {}
 
@@ -98,7 +104,22 @@ clearDepartmentForm() { this.departmentForm.reset({ }); }
     }
   }
 
-  removeDepartment(id: number) {
-    this.departments = this.departments.filter(x => x.id != id);
+  removeDepartment() {
+    this.departments = this.departments.filter(x => x.id != this.departmentIdToDelete);
   }
+
+  showConfirmDialog(depId: number){
+    this.departmentIdToDelete     = depId; // Save Employee Id to be used later
+    this.showConfirmationDialog = true;  // Show Confirmation Dialog
+  }
+
+  confirmEmployeeDelete(isConfirmed: boolean){
+    if(isConfirmed){
+      this.removeDepartment();
+    }
+
+    this.departmentIdToDelete     = null; // Clear Employee Id
+    this.showConfirmationDialog = false; // Hide Confirmation Dialog
+  }
+
 }

@@ -58,7 +58,7 @@
 
       <div>
         <button type="button" class="btn btn-outline-secondary" 
-        data-bs-toggle="modal" data-bs-target="#saveEmployeeModal" (click)="clearEmployeeForm()">
+        data-bs-toggle="modal" data-bs-target="#saveEmployeeModal" (click)="loadSaveDialog()">
           <i class="bi bi-person-plus-fill"></i>
           <span> Add</span>
         </button>
@@ -137,7 +137,7 @@
       <div class="modal-body">
         <form [formGroup]="employeeForm">
           <div class="row align-end">
-            <div class="col-lg-4 col-md-4 col-sm-12">
+            <div class="col-lg-4 col-md-4 col-sm-12 mb-2">
               <label for="nameControl" class="form-label">Name</label>
               <input type="text" class="form-control" id="nameControl" formControlName="Name"
                placeholder="Name" [class.invalid-input]="employeeForm.get('Name')?.invalid && employeeForm.get('Name')?.touched">

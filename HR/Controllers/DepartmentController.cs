@@ -1,4 +1,5 @@
 ﻿using HR.DTOs.Department;
+using HR.DTOs.SharedDTO;
 using HR.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -136,6 +137,24 @@ namespace HR.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message); // 400
+            }
+        }
+        [HttpGet("GetDepartmentsList")]
+        public IActionResult GetDepartmentsList()
+        {
+            try
+            {
+                var data = _dbContext.Departments.Select(department => new ListDTO
+                {
+                    Id = department.Id,
+                    Name = department.Name
+                });
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message); // 400
+
             }
         }
     }

@@ -5,6 +5,7 @@ using HR.DTOs.Employees;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using HR.DTOs.SharedDTO;
+using HR.Enums;
 
 namespace HR.Controllers
 {
@@ -34,7 +35,7 @@ namespace HR.Controllers
                                  (filterDto.PositionId == null || employee.PositionId == filterDto.PositionId) &&          // Filter by Postion or return all if postion is null
                                  (filterDto.Name == null || employee.Name.ToLower().Contains(filterDto.Name.ToLower())) &&
                                  (filterDto.IsActive == null || employee.IsActive == filterDto.IsActive)
-                           orderby employee.Id
+                           orderby employee.Id descending
                            select new EmployeeDto
                            {
                                Id = employee.Id,
@@ -112,6 +113,7 @@ namespace HR.Controllers
                     Id = 0, //Ignored, If it is any number other than 0, the database will be forced to take it
                     Name = employeeDto.Name,
                     BirthDate = employeeDto.BirthDate,
+                    Phone = employeeDto.Phone,
                     PositionId = employeeDto.PositionId,
                     IsActive = employeeDto.IsActive,
                     StartDate = employeeDto.StartDate,
@@ -143,6 +145,7 @@ namespace HR.Controllers
 
                 employee.Name = employeeDto.Name;
                 employee.BirthDate = employeeDto.BirthDate;
+                employee.Phone = employeeDto.Phone;
                 employee.PositionId = employeeDto.PositionId;
                 employee.IsActive = employeeDto.IsActive;
                 employee.StartDate = employeeDto.StartDate;
@@ -203,18 +206,6 @@ namespace HR.Controllers
 
             }
         }
-    }
-}
 
-public enum LookUpMajorCodes
-{
-    EmployeePositions = 0,
-    DepartmentTypes = 1,
-    VacationTypes = 2
-}
-public enum LookUpMinorCodes
-{
-    HR = 1,
-    Manager = 2,
-    Developer = 3
+    }
 }

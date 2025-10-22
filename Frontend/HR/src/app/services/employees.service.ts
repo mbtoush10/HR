@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Employee } from '../interfaces/employee-interface';
 
 @Injectable({
   providedIn: 'root'
@@ -31,4 +32,13 @@ export class EmployeesService {
 
     return this._http.get(this.apiUrl + "GetManagersList", {params});
   }
+
+  add(employee: Employee){
+    return this._http.post(this.apiUrl + "Add", employee);
+  }
+
+  update(employee: Employee){
+    return this._http.put(this.apiUrl + "Update", employee);
+  }
+
 }

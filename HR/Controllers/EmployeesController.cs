@@ -4,10 +4,11 @@ using HR.Model;
 using HR.DTOs.Employees;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using HR.DTOs.SharedDTO;
 
 namespace HR.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/Employees")] // --> Data Anonotation
     [ApiController]          // --> Data Anonotation
     public class EmployeesController : ControllerBase
@@ -19,17 +20,16 @@ namespace HR.Controllers
         {
             _dbContext = dbContext; // Dependency Injection (DI) to get the DbContext instance
         }
-        [Authorize(Roles = "HR, Admin")]
+        //[Authorize(Roles = "HR, Admin")]
         [HttpGet("GetAll")] // --> Data Anonotation
-        public IActionResult GetAll([FromQuery]FilterEmployeeDto filterDto)// postion is Optional
+        public IActionResult GetAll([FromQuery] FilterEmployeeDto filterDto)// postion is Optional
         {
             try
             {
                 var data = from employee in _dbContext.Employees
-                           from department in _dbContext.Departments.Where(x => x.Id == employee.Id).DefaultIfEmpty()      //Left Join
+                           from department in _dbContext.Departments.Where(x => x.Id == employee.DepartmentId).DefaultIfEmpty()      //Left Join
                            from manager in _dbContext.Employees.Where(x => employee.ManagerId == x.Id).DefaultIfEmpty() //Self Join
                            from lookup in _dbContext.LookUps.Where(x => x.Id == employee.PositionId).DefaultIfEmpty()   //Left Join
-
                            where
                                  (filterDto.PositionId == null || employee.PositionId == filterDto.PositionId) &&          // Filter by Postion or return all if postion is null
                                  (filterDto.Name == null || employee.Name.ToLower().Contains(filterDto.Name.ToLower())) &&
@@ -59,7 +59,7 @@ namespace HR.Controllers
         }
 
         [HttpGet("GetById")]// --> Query Parameter
-        public IActionResult GetById(long id) 
+        public IActionResult GetById(long id)
         {
             try
             {
@@ -89,7 +89,7 @@ namespace HR.Controllers
         }
 
         [HttpPost("Add")] // --> Request body
-        public IActionResult Add( SaveEmployeeDto employeeDto)
+        public IActionResult Add(SaveEmployeeDto employeeDto)
         {
             try
             {
@@ -101,7 +101,7 @@ namespace HR.Controllers
                     IsAdmin = false
                 };
 
-                var _user = _dbContext.Users.FirstOrDefault(x => x.UserName.ToLower()== user.UserName.ToLower());
+                var _user = _dbContext.Users.FirstOrDefault(x => x.UserName.ToLower() == user.UserName.ToLower());
                 if (_user != null)
                     return BadRequest("Cannot add employee, user already exists");
 
@@ -179,5 +179,42 @@ namespace HR.Controllers
                 return BadRequest(ex.Message); // 400
             }
         }
+
+        [HttpGet("GetManagersList")]
+        public IActionResult GetManagersList([FromQuery] long? employeeId)
+        {
+            try
+            {
+                var data = _dbContext.Employees.Where(emp => emp.LookUp != null && 
+                emp.LookUp.MajorCode == (int)LookUpMajorCodes.EmployeePositions && 
+                emp.LookUp.MinorCode == (int)LookUpMinorCodes.Manager && 
+                emp.IsActive &&
+                emp.Id != employeeId)
+                    .Select(manger => new ListDTO
+                    {
+                        Id   = manger.Id,
+                        Name = manger.Name
+                    });
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message); // 400
+
+            }
+        }
     }
+}
+
+public enum LookUpMajorCodes
+{
+    EmployeePositions = 0,
+    DepartmentTypes = 1,
+    VacationTypes = 2
+}
+public enum LookUpMinorCodes
+{
+    HR = 1,
+    Manager = 2,
+    Developer = 3
 }

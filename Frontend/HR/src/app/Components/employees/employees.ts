@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common'
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Employee } from '../../interfaces/employee-interface'
 import { ConfirmationDialog } from '../../shared-components/confirmation-dialog/confirmation-dialog';
+import { EmployeesService } from '../../services/employees.service';
+import { List } from '../../interfaces/list-interface';
 
 @Component({
   selector: 'app-employees',
@@ -13,161 +15,15 @@ import { ConfirmationDialog } from '../../shared-components/confirmation-dialog/
   templateUrl: './employees.html',
   styleUrl: './employees.css'
 })
-export class Employees {
+export class Employees implements OnInit , OnDestroy {
 
   @ViewChild('closeButton') closeButton: ElementRef | undefined; // Get Element By Id
-  
-  employees: Employee[] = [
-    {
-      id: 1, name:'Emp01',isActive: true,  startDate: new Date(2025, 11, 21),
-      phone: '+962796320434', positionId:1, positionName: 'Manager', birthDate: new Date(1995, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: null, managerName: null
-    },
-    {
-      id: 2, name:'Emp02',isActive: true,  startDate: new Date(2025, 6, 21),
-      phone: '+962764564757', positionId:1, positionName: 'Manager', birthDate: new Date(2001, 5, 1),
-      departmentId:1, departmentName: 'IT', managerId: null, managerName: null
-    },
-    {
-      id: 3, name:'Emp03',isActive: false,  startDate: new Date(2025, 5, 21),
-      phone: '+962785466664', positionId:1, positionName: 'Develpoer', birthDate: new Date(1999, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 2, managerName: 'Emp02'
-    },
-    {
-      id: 4, name:'Emp04',isActive: true,  startDate: new Date(2025, 1, 21),
-      phone: '+962795464565', positionId:1, positionName: 'Develpoer', birthDate: new Date(2003, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 2, managerName: 'Emp02'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-    {
-      id: 5, name:'Emp05',isActive: false,  startDate: new Date(2025, 2, 25),
-      phone: '+962796896756', positionId:1, positionName: 'HR', birthDate: new Date(2000, 5, 1),
-      departmentId:1, departmentName: 'HR', managerId: 1, managerName: 'Emp01'
-    },
-  ];
+
+  employees: Employee[] = [];
 
   employeeTableColumns: string[] = ['#', 'Name', 'Phone', 'Birthdate', 'Status', 'Start Date', 'Position', 'Department', 'Manager'];
 
-  departments= [
+  departments: List[]= [
     { id: null, name: 'Select Departments' },
     { id: 1, name: 'HR' },
     { id: 2, name: 'IT' },
@@ -176,7 +32,7 @@ export class Employees {
     { id: 5, name: 'Sales' }
   ];
 
-  positions= [
+  positions: List[]= [
     { id: null, name: 'Select Manager' },
     { id: 1, name: 'Manager' },
     { id: 2, name: 'Developer' },
@@ -185,11 +41,7 @@ export class Employees {
     { id: 5, name: 'Salesperson' }
   ];
 
-  managers= [
-    { id: null, name: 'Select Manager' },
-    { id: 1, name: 'Emp01' },
-    { id: 2, name: 'Emp02' }
-  ];
+  managers: List[]= [];
 
   employeeForm : FormGroup = new FormGroup({
     Id:         new FormControl(null),
@@ -214,10 +66,76 @@ export class Employees {
   showConfirmationDialog: boolean   = false;
   employeeIdToDelete: number | null = null;
 
-  constructor(private _datePipe: DatePipe) { // Dependency Injection
-    
+  constructor(private _datePipe: DatePipe,
+    private _employeesService: EmployeesService
+  ) { // Dependency Injection
+  }
+  ngOnDestroy(): void {
+    console.log("Employees Component Destroyed");
+  }
+  
+  ngOnInit(): void {
+    this.loadEmployees();
+    this.loadManegarsList();
   }
 
+
+  loadEmployees(){
+    this.employees = []; // Clear Existing Employees
+    this._employeesService.getAll().subscribe(
+      {
+        next: (res : any) => { //Succesful Request
+          if(res?.length > 0){
+            res.forEach((x : any)=>{
+              let emp: Employee ={
+                id:             x.id,
+                name:           x.name,
+                phone:          x.phone,
+                startDate:      x.startDate,
+                birthDate:      x.birthDate,
+                positionId:     x.positionId,
+                positionName:   x.positionName,
+                departmentId:   x.departmentId,
+                departmentName: x.departmentName,
+                managerId:      x.managerId,
+                managerName:    x.managerName,
+                isActive:       x.isActive,
+              }
+              this.employees.push(emp);
+            })
+          }
+        },
+        error: err=>{ //Failed Request | 400, 500, etc
+          console.log(err.message);
+        }
+      }
+    ); 
+  }
+
+  loadManegarsList(employeeId?: number){
+    this.managers = [
+      { id: null, name: 'Select Manager' }
+    ];
+
+    this._employeesService.getManegars(employeeId).subscribe(
+      {
+        next: (res : any) => {
+          if(res?.length > 0){
+            res.forEach((x : any)=>{
+              let man: List={
+                id:   x.id,
+                name: x.name
+              };
+              this.managers.push(man);
+            })
+          }
+        },
+        error: err=>{
+          console.log(err.message);
+        }
+      }
+    );
+  }
   
   saveEmployee(){
     

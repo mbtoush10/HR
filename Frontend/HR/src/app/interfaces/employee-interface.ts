@@ -11,4 +11,5 @@ export interface Employee {
   managerName   ?: string | null; // Accept Multiple Data types
   departmentId  ?: number;
   departmentName?: string;
+  image         ?: any;
 }

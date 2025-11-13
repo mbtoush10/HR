@@ -7,37 +7,33 @@
       </h5>
     </div>
     <div class="card-body">
-      <div class="row">
-        <div class="col-lg-4 col-md-4 col-sm-12">
-          <label for="employeeName" class="form-label">Employee Name:</label>
-          <input
-            type="text"
-            class="form-control"
-            id="employeeName"
-            placeholder="Name"
-          />
-        </div>
-        <div class="col-lg-4 col-md-4 col-sm-12">
-          <label for="employeePosition" class="form-label"
-            >Employee Position:</label
-          >
-          <input
-            type="text"
-            class="form-control"
-            id="employeePosition"
-            placeholder="Position"
-          />
-        </div>
-        <div class="col-lg-4 col-md-4 col-sm-12">
-          <label for="employeeStatus" class="form-label"
-            >Employee Status:</label
-          >
-          <input
-            type="text"
-            class="form-control"
-            id="employeeStatus"
-            placeholder="Status"
-          />
+      <div [formGroup]="searchFilterForm">
+        <div class="row">
+          <div class="col-lg-4 col-md-4 col-sm-12">
+            <label for="employeeName" class="form-label">Employee Name:</label>
+            <input
+              type="text"
+              class="form-control" formControlName="Name"
+              id="employeeName"
+              placeholder="Name"
+            />
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12">
+            <label for="employeePosition" class="form-label">Employee Position:</label>
+            <select class="form-select" aria-label="Default select example" id="employeePosition" formControlName="PositionId">
+                @for(position of positions; track position){
+                  <option [ngValue]="position.id">{{position.name}}</option>
+                }
+            </select>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12">
+            <label for="employeeStatus" class="form-label">Employee Status:</label>
+            <select class="form-select" aria-label="Default select example" id="employeeStatus" formControlName="Status">
+               @for(status of employeeStatusesList; track status){
+                <option [ngValue]="status.id">{{status.name}}</option>
+              }
+            </select>
+          </div>
         </div>
       </div>
 
@@ -79,6 +75,11 @@
           @for(employee of employees | paginate : paginationConfig ; track employee; let i = $index){
             <tr>
               <td>{{i + 1}}</td>
+              <td>
+                <img src="https://i.pinimg.com/originals/78/fb/d5/78fbd51aa7514353ce31f2b0495eed27.jpg" 
+                alt="Employee Image"
+                class="employee-image">
+              </td>
               <td>{{employee.name}}</td>
               <td>{{employee.phone}}</td>
               <td>{{employee.birthDate | date: "dd/MM/yyyy"}}</td>
@@ -166,7 +167,7 @@
               <select class="form-select" aria-label="Default select example" id="positionsControl" formControlName="Position"
                [class.invalid-input]="employeeForm.get('Position')?.invalid && employeeForm.get('Position')?.touched">
                 @for(position of positions; track position){
-                  <option [value]="position.id">{{position.name}}</option>
+                  <option [ngValue]="position.id">{{position.name}}</option>
                 }
               </select>
             </div>
@@ -176,7 +177,7 @@
               <select class="form-select" aria-label="Default select example" id="departmentsControl" formControlName="Department"
                [class.invalid-input]="employeeForm.get('Department')?.invalid && employeeForm.get('Department')?.touched">
                 @for(department of departments; track department){
-                  <option [value]="department.id">{{department.name}}</option>
+                  <option [ngValue]="department.id">{{department.name}}</option>
                 }
               </select>
             </div>
@@ -185,9 +186,15 @@
               <label for="managersControl" class="form-label">Manager</label>
               <select class="form-select" aria-label="Default select example" id="managersControl" formControlName="Manager">
                 @for(manager of managers; track manager){
-                  <option [value]="manager.id">{{manager.name}}</option>
+                  <option [ngValue]="manager.id">{{manager.name}}</option>
                 }
               </select>
+            </div>
+
+            <div class="col-lg-4 col-md-4 col-sm-12 mb-2">
+              <label for="empImage" class="form-label">Image</label>
+              <input class="form-control form-control-sm" accept="image/*"
+              (change)="uploadImage($event)" id="empImage" type="file">
             </div>
 
             <div class="col-lg-4 col-md-4 col-sm-12 mb-2" >

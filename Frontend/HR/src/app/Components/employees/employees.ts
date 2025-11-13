@@ -22,12 +22,19 @@ export class Employees implements OnInit , OnDestroy {
 
   @ViewChild('closeButton') closeButton: ElementRef | undefined; // Get Element By Id
 
-  employeeTableColumns: string[] = ['#', 'Name', 'Phone', 'Birthdate', 'Status', 'Start Date', 'Position', 'Department', 'Manager'];
+  employeeTableColumns: string[] = ['#', 'Image', 'Name', 'Phone', 'Birthdate', 'Status', 'Start Date', 'Position', 'Department', 'Manager'];
   
   employees: Employee[] = [];
+  
   departments: List[]= [];
   positions:   List[]= [];
   managers:    List[]= [];
+
+  employeeStatusesList: List[] = [
+    {id: null, name: 'Select Status'},
+    {id: true, name: 'Active'},
+    {id: false,name: 'Inactive'},
+  ];
 
   employeeForm : FormGroup = new FormGroup({
     Id:         new FormControl(null),
@@ -38,7 +45,14 @@ export class Employees implements OnInit , OnDestroy {
     Position:   new FormControl(null, [Validators.required]),
     Department: new FormControl(null, [Validators.required]),
     Manager:    new FormControl(null),
-    IsActive:   new FormControl(true, [Validators.required])
+    IsActive:   new FormControl(true, [Validators.required]),
+    Image:      new FormControl(null),
+  });
+
+  searchFilterForm : FormGroup = new FormGroup({
+    Name:       new FormControl(null),
+    Status:     new FormControl(null),
+    PositionId: new FormControl(null),
   });
 
   paginationConfig = {
@@ -63,15 +77,25 @@ export class Employees implements OnInit , OnDestroy {
   
   ngOnInit(): void {
     this.loadEmployees();
-    this.loadManegarsList();
-    this.loadDepartments();
-    this.loadPositions();
+    this.loadPositionsList();
   }
 
+  uploadImage(event: any){
+    this.employeeForm.patchValue({
+      Image: event.target.files[0]
+    });
+    
+  }
 
   loadEmployees(){
     this.employees = []; // Clear Existing Employees
-    this._employeesService.getAll().subscribe(
+
+    let searchObj = {
+      name:       this.searchFilterForm.value.Name,
+      positionId: this.searchFilterForm.value.PositionId,
+      status:     this.searchFilterForm.value.Status,
+    };
+    this._employeesService.getAll(searchObj).subscribe(
       {
         next: (res : any) => { //Succesful Request
           if(res?.length > 0){
@@ -95,7 +119,7 @@ export class Employees implements OnInit , OnDestroy {
           }
         },
         error: err=>{ //Failed Request | 400, 500, etc
-          console.log(err.message);
+          alert(err.error.message ?? err.error ?? "An error occurred while loading employees."); // Show Error Message
         }
       }
     ); 
@@ -116,7 +140,7 @@ export class Employees implements OnInit , OnDestroy {
           }
         },
         error: err=>{
-          console.log(err.message);
+          alert(err.error.message ?? err.error ?? "An error occurred while loading managers."); // Show Error Message
         }
       }
     );
@@ -137,13 +161,14 @@ export class Employees implements OnInit , OnDestroy {
           }
         },
         error: err=>{
-          console.log(err.message);
+          alert(err.error.message ?? err.error ?? "An error occurred while loading departments."); // Show Error Message
+
         }
       }
     );
   }
 
-  loadPositions(){
+  loadPositionsList(){
     this.positions = [{ id: null, name: 'Select Positions' }];
 
     this._lookupsService.getByMajorCode(LookupsMajorCodes.Positions).subscribe(
@@ -156,7 +181,8 @@ export class Employees implements OnInit , OnDestroy {
           }
         },
         error: err=>{
-          console.log(err.message);
+          alert(err.error.message ?? err.error ?? "An error occurred while loading positions."); // Show Error Message
+
         }
       }
     );
@@ -175,6 +201,7 @@ export class Employees implements OnInit , OnDestroy {
         departmentId:   this.employeeForm.value.Department,
         managerId:      this.employeeForm.value.Manager,
         isActive:       this.employeeForm.value.IsActive,
+        image:          this.employeeForm.value.Image
     };
 
     if(!this.employeeForm.value.Id){ // Add New Employee
@@ -183,7 +210,7 @@ export class Employees implements OnInit , OnDestroy {
           this.loadEmployees();
         },
         error: err=>{
-          console.log(err.message);
+          alert(err.error.message ?? err.error ?? "An error occurred while adding the employee."); // Show Error Message
         }
       });
     }
@@ -193,7 +220,7 @@ export class Employees implements OnInit , OnDestroy {
           this.loadEmployees();
         },
         error: err=>{
-          console.log(err.message);
+          alert(err.error.message ?? err.error ?? "An error occurred while updating the employee."); // Show Error Message
         }
       }); 
     }
@@ -224,13 +251,23 @@ export class Employees implements OnInit , OnDestroy {
         Position:   employee?.positionId,
         Department: employee?.departmentId,
         Manager:    employee?.managerId,
-        IsActive:   employee?.isActive
+        IsActive:   employee?.isActive,
+        Image:      employee?.image
       })
     }
   }
   
   removeEmployee(){
-    this.employees = this.employees.filter( x=> x.id != this.employeeIdToDelete);
+    if(this.employeeIdToDelete){
+      this._employeesService.delete(this.employeeIdToDelete).subscribe({
+        next: res =>{
+          this.loadEmployees();
+        },
+        error: err=>{
+          alert(err.error.message ?? err.error ?? "An error occurred while deleting the employee."); // Show Error Message
+        }
+      });
+    }
   }
   
   changePage(pageNumber: number){
@@ -256,7 +293,7 @@ export class Employees implements OnInit , OnDestroy {
     this.clearEmployeeForm();
     this.loadManegarsList(employeeId);
     this.loadDepartments();
-    this.loadPositions();
+    this.loadPositionsList();
     }
 
 }

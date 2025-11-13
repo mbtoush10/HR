@@ -173,6 +173,11 @@ namespace HR.Controllers
                 if (employee == null)
                     return BadRequest("Employee not found");
 
+                var employeeAssociations = _dbContext.Employees.FirstOrDefault(e => e.ManagerId == id);
+
+                if(employeeAssociations != null)
+                    return BadRequest(new Exception("Managers with assigned employees cannot be deleted.")); // Employee is a manager of other employees
+
                 _dbContext.Employees.Remove(employee);
                 _dbContext.SaveChanges();
                 return Ok();

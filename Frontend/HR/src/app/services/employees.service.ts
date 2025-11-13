@@ -13,12 +13,12 @@ export class EmployeesService {
 
   }
 
-  getAll(){
+  getAll(searchObj: any){
 
     let params = new HttpParams();
-    params = params.set("PositionId","");
-    params = params.set("Name","");
-    params = params.set("IsActive","");
+    params = params.set("PositionId", searchObj.positionId ?? "");
+    params = params.set("Name", searchObj.name ?? "");
+    params = params.set("IsActive",searchObj.status ?? "" );
 
 
     return this._http.get(this.apiUrl + "GetAll", {params});
@@ -39,6 +39,13 @@ export class EmployeesService {
 
   update(employee: Employee){
     return this._http.put(this.apiUrl + "Update", employee);
+  }
+  delete(id: number){
+
+    let params = new HttpParams();
+    params = params.set("id", id);
+
+    return this._http.delete(this.apiUrl + "Delete", {params});
   }
 
 }

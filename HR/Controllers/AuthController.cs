@@ -38,7 +38,7 @@ namespace HR.Controllers
 
                 var token = GenerateJwtToken(user);
 
-                return Ok(token);
+                return Ok(new {token = token}); // the token is in the form of JSON object with a property named "token" and its value is the generated token
             }
             catch (Exception ex)
             {

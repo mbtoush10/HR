@@ -9,7 +9,7 @@ using HR.Enums;
 
 namespace HR.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/Employees")] // --> Data Anonotation
     [ApiController]          // --> Data Anonotation
     public class EmployeesController : ControllerBase
@@ -25,7 +25,7 @@ namespace HR.Controllers
             _env = env;
             _config = config;
         }
-        //[Authorize(Roles = "HR, Admin")]
+        [Authorize(Roles = "HR, Admin")]
         [HttpGet("GetAll")] // --> Data Anonotation
         public IActionResult GetAll([FromQuery] FilterEmployeeDto filterDto)// postion is Optional
         {
@@ -64,7 +64,7 @@ namespace HR.Controllers
             }
         }
 
-        [HttpGet("GetById")]// --> Query Parameter
+        //[HttpGet("GetById")]// --> Query Parameter
         public IActionResult GetById(long id)
         {
             try

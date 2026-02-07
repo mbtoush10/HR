@@ -1,6 +1,7 @@
 ﻿using HR.DTOs.Department;
 using HR.DTOs.SharedDTO;
 using HR.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Xml.Linq;
@@ -8,6 +9,7 @@ using static Azure.Core.HttpHeader;
 
 namespace HR.Controllers
 {
+    [Authorize]
     [Route("api/Department")]
     [ApiController]
     public class DepartmentController : ControllerBase

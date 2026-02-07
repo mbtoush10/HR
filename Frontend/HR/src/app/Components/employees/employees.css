@@ -8,9 +8,7 @@
 .align-end{
     align-items: flex-end;
 }
-.invalid-input{
-    border: solid 2px red;
-}
+
 .employee-image{
     width: 3.4rem;
     height: 3.4rem;

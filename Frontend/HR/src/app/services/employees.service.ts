@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHandler, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Employee } from '../interfaces/employee-interface';
 
@@ -15,13 +15,16 @@ export class EmployeesService {
 
   getAll(searchObj: any){
 
+    // let token = localStorage.getItem("token") ?? "";
+    // let headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
+
     let params = new HttpParams();
     params = params.set("PositionId", searchObj.positionId ?? "");
     params = params.set("Name", searchObj.name ?? "");
     params = params.set("IsActive",searchObj.status ?? "" );
 
 
-    return this._http.get(this.apiUrl + "GetAll", {params});
+    return this._http.get(this.apiUrl + "GetAll", {params, /*headers*/});
   }
 
   getManegars(employeeId?: number){

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, viewChild, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common'
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -20,7 +20,8 @@ import { LookupsMajorCodes } from '../../enums/major-codes';
 })
 export class Employees implements OnInit , OnDestroy {
 
-  @ViewChild('closeButton') closeButton: ElementRef | undefined; // Get Element By Id
+  @ViewChild('closeButton') closeButton :      ElementRef | undefined; // Get Element By Id
+  @ViewChild('empImageInput') empImageInput !: ElementRef ; // !: = there's will be value when i use it, trust me bro :D
 
   employeeTableColumns: string[] = ['#', 'Image', 'Name', 'Phone', 'Birthdate', 'Status', 'Start Date', 'Position', 'Department', 'Manager'];
   
@@ -38,8 +39,8 @@ export class Employees implements OnInit , OnDestroy {
 
   employeeForm : FormGroup = new FormGroup({
     Id:         new FormControl(null),
-    Name:       new FormControl(null,[Validators.required]),
-    Phone:      new FormControl(null,[Validators.required]),
+    Name:       new FormControl(null, [Validators.required]),
+    Phone:      new FormControl(null, [Validators.required]),
     StartDate:  new FormControl(null, [Validators.required]),
     BirthDate:  new FormControl(null, [Validators.required]),
     Position:   new FormControl(null, [Validators.required]),
@@ -47,6 +48,7 @@ export class Employees implements OnInit , OnDestroy {
     Manager:    new FormControl(null),
     IsActive:   new FormControl(true, [Validators.required]),
     Image:      new FormControl(null),
+    IsImage:    new FormControl(false), // To Check if Employee has Image or not
   });
 
   searchFilterForm : FormGroup = new FormGroup({
@@ -113,6 +115,8 @@ export class Employees implements OnInit , OnDestroy {
                 managerId:      x.managerId,
                 managerName:    x.managerName,
                 isActive:       x.isActive,
+                imagePath:      x.imagePath ? x.imagePath.replaceAll("\\", "/") : "assets/images/emp-default-image.jpg",
+                isImage:        x.imagePath ? true : false // Check if Image Path is Empty
               }
               this.employees.push(emp);
             })
@@ -201,7 +205,8 @@ export class Employees implements OnInit , OnDestroy {
         departmentId:   this.employeeForm.value.Department,
         managerId:      this.employeeForm.value.Manager,
         isActive:       this.employeeForm.value.IsActive,
-        image:          this.employeeForm.value.Image
+        image:          this.employeeForm.value.Image,
+        isImage:        this.employeeForm.value.IsImage
     };
 
     if(!this.employeeForm.value.Id){ // Add New Employee
@@ -229,12 +234,18 @@ export class Employees implements OnInit , OnDestroy {
     this.clearEmployeeForm(); 
     
   }
+
+  clearInputImage(){
+    this.empImageInput.nativeElement.value = ''; // Clear Selected Value
+  }
   
   clearEmployeeForm()
   {
     this.employeeForm.reset({
-      IsActive: true
+      IsActive: true,
+      IsImage: false
     });
+    this.clearInputImage()
   }
   
   editEmployee(id: number){
@@ -252,7 +263,7 @@ export class Employees implements OnInit , OnDestroy {
         Department: employee?.departmentId,
         Manager:    employee?.managerId,
         IsActive:   employee?.isActive,
-        Image:      employee?.image
+        IsImage:    employee?.isImage
       })
     }
   }
@@ -287,6 +298,12 @@ export class Employees implements OnInit , OnDestroy {
 
     this.employeeIdToDelete     = null; // Clear Employee Id
     this.showConfirmationDialog = false; // Hide Confirmation Dialog
+  }
+
+  removeImage(){
+    this.employeeForm.patchValue({
+      IsImage: false
+    });
   }
 
   loadSaveDialog(employeeId?: number){

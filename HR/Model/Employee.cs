@@ -32,6 +32,6 @@ namespace HR.Model
         public long? UserId { get; set; }
         public User? User { get; set; } // Navigation proparty
 
-
+        public string? ImagePath { get; set; }
     }
 }

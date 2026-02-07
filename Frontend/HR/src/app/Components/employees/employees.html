@@ -76,9 +76,10 @@
             <tr>
               <td>{{i + 1}}</td>
               <td>
-                <img src="https://i.pinimg.com/originals/78/fb/d5/78fbd51aa7514353ce31f2b0495eed27.jpg" 
+                <span class="emp-img" [style.background-image]=" `url('${employee.imagePath}')` "></span>
+                <!-- <img [src]="employee.imagePath" 
                 alt="Employee Image"
-                class="employee-image">
+                class="employee-image"> -->
               </td>
               <td>{{employee.name}}</td>
               <td>{{employee.phone}}</td>
@@ -193,7 +194,11 @@
 
             <div class="col-lg-4 col-md-4 col-sm-12 mb-2">
               <label for="empImage" class="form-label">Image</label>
-              <input class="form-control form-control-sm" accept="image/*"
+              @if(employeeForm.get('IsImage')?.value)
+              {
+                <i (click)="removeImage()" class="bi bi-x-circle remove-image-icon" ></i>
+              }
+              <input class="form-control form-control-sm" accept="image/*" #empImageInput
               (change)="uploadImage($event)" id="empImage" type="file">
             </div>
 

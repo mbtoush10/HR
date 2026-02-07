@@ -14,6 +14,7 @@
         public string? ManagerName { get; set; }
         public long? PositionId { get; set; }
         public string? PositionName { get; set; }
+        public string? ImagePath { get; set; }
 
     }
 }

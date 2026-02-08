@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -8,10 +9,25 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
-export class Login {
+export class Login implements OnInit{
 
-  constructor(private _authService: AuthService) { 
+  showErrorMessage: boolean = false;
+  errorMessage: string = "";
 
+  constructor(private _authService: AuthService,
+    private _router: Router,
+    private _route: ActivatedRoute
+  ){ 
+
+  }
+  
+  ngOnInit() {
+    this._route.queryParams.subscribe(params => {
+      if (params['authRequired']) {
+        this.showErrorMessage = true;
+        this.errorMessage = "You must be logged in to access this page.";
+      }
+    });
   }
 
   loginForm = new FormGroup({
@@ -29,9 +45,13 @@ export class Login {
       next: (res: any) => {
         // console.log(res); // token
         localStorage.setItem("token", res.token);
+        localStorage.setItem("role", res.role);
+        this.showErrorMessage = false;
+        this._router.navigate(['/employees']);
       },
       error: (err) => {
-        alert(err.error.message ?? err.error() ?? "An error occurred while logging in.");
+        this.showErrorMessage = true;
+        this.errorMessage = err.error.message ?? err.error ?? "An error occurred while logging in.";
       }
     });
   }

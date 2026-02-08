@@ -24,6 +24,11 @@
              Login 
             </button>
         </div>
+        @if(showErrorMessage){
+            <div class="err-message">
+                * {{errorMessage}}
+            </div>
+        }
     </div>
     
 </div>

@@ -53,7 +53,7 @@
       </div>
 
       <div>
-        <button type="button" class="btn btn-outline-secondary" 
+        <button type="button" class="btn btn-outline-secondary" [disabled]="!chickRole()"
         data-bs-toggle="modal" data-bs-target="#saveEmployeeModal" (click)="loadSaveDialog()">
           <i class="bi bi-person-plus-fill"></i>
           <span> Add</span>

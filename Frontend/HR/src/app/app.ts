@@ -32,7 +32,15 @@ export class App {
   showNavBar() : boolean
   {
 
-    return this.router.url !== "/login";
+    const currentRoute = this.router.url.split('?')[0];
+    return currentRoute !== '/login';
+  }
+
+  signOut(){
+    // Clear the token from local storage to sign out the user
+    localStorage.removeItem("token");
+    // Optionally, navigate to the login page after signing out
+    this.router.navigate(['/login']);
   }
 
 }

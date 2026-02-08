@@ -66,6 +66,7 @@ export class Employees implements OnInit , OnDestroy {
   deleteDialogBody: string          = 'Are you sure you want to delete this employee?';
   showConfirmationDialog: boolean   = false;
   employeeIdToDelete: number | null = null;
+localStorage: any;
 
   constructor(private _datePipe: DatePipe,
     private _employeesService: EmployeesService,
@@ -311,6 +312,12 @@ export class Employees implements OnInit , OnDestroy {
     this.loadManegarsList(employeeId);
     this.loadDepartments();
     this.loadPositionsList();
+    }
+
+    chickRole(){
+      let role = localStorage.getItem('role');
+
+      return role?.toLowerCase() === 'admin' || role?.toLowerCase() === 'hr';
     }
 
 }

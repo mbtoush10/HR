@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using HR.DTOs.SharedDTO;
 using HR.Enums;
+using System.Security.Claims;
 
 namespace HR.Controllers
 {
@@ -25,12 +26,16 @@ namespace HR.Controllers
             _env = env;
             _config = config;
         }
-        [Authorize(Roles = "HR, Admin")]
+
         [HttpGet("GetAll")] // --> Data Anonotation
         public IActionResult GetAll([FromQuery] FilterEmployeeDto filterDto)// postion is Optional
         {
             try
             {
+                // Extracting the user's role and ID from the claims in the JWT token
+                var role = User.FindFirst(ClaimTypes.Role)?.Value; // Admin, HR, Developer, ...
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
                 var data = from employee in _dbContext.Employees
                            from department in _dbContext.Departments.Where(x => x.Id == employee.DepartmentId).DefaultIfEmpty() //Left Join
                            from manager in _dbContext.Employees.Where(x => employee.ManagerId == x.Id).DefaultIfEmpty()         //Self Join
@@ -55,7 +60,11 @@ namespace HR.Controllers
                                DepartmentId = employee.DepartmentId,
                                DepartmentName = department.Name,
                                ImagePath = employee.ImagePath != null ? Path.Combine(_config["BaseUrl"],employee.ImagePath) : "",
+                               UserId = employee.UserId
                            };
+                if(role?.ToLower() != "admin" && role?.ToLower() != "hr")
+                    data = data.Where(x => x.UserId == long.Parse(userId)); // If the user is not an Admin or HR, filter the data to return only their own employee record
+
                 return Ok(data);
             }
             catch (Exception ex)
@@ -64,7 +73,7 @@ namespace HR.Controllers
             }
         }
 
-        //[HttpGet("GetById")]// --> Query Parameter
+        [HttpGet("GetById")]// --> Query Parameter
         public IActionResult GetById(long id)
         {
             try
@@ -94,6 +103,7 @@ namespace HR.Controllers
             }
         }
 
+        [Authorize(Roles = "HR, Admin")]
         [HttpPost("Add")] // --> Request body
         public IActionResult Add([FromForm] SaveEmployeeDto employeeDto)
         {

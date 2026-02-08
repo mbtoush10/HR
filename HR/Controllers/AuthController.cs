@@ -1,10 +1,12 @@
-﻿using HR.DTOs.LogIn;
+﻿using HR.DTOs.Auth;
+using HR.DTOs.LogIn;
 using HR.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Any;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -38,7 +40,7 @@ namespace HR.Controllers
 
                 var token = GenerateJwtToken(user);
 
-                return Ok(new {token = token}); // the token is in the form of JSON object with a property named "token" and its value is the generated token
+                return Ok(token); // the token is in the form of JSON object with a property named "token" and its value is the generated token
             }
             catch (Exception ex)
             {
@@ -46,19 +48,24 @@ namespace HR.Controllers
             }
         }
 
-        private string GenerateJwtToken(User user)
+        private TokenDto GenerateJwtToken(User user)
         {
+            string role;
             var claims = new List<Claim>(); // User Info, and its key-value pairs
 
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
             claims.Add(new Claim(ClaimTypes.Name, user.UserName));
 
             if (user.IsAdmin)
+                { 
                 claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+                role = "Admin";
+            }
             else
             {
                 var employee = _dbContext.Employees.Include(x => x.LookUp).FirstOrDefault(x => x.UserId == user.Id);
                 claims.Add(new Claim(ClaimTypes.Role, employee.LookUp.Name));
+                role = employee.LookUp.Name;
             }
 
             var key   = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("WHAFWEI#!@S!!112312WQEQW@RWQEQW432"));
@@ -71,9 +78,10 @@ namespace HR.Controllers
                 );
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.WriteToken(tokenSettings); 
+            var token = tokenHandler.WriteToken(tokenSettings);
 
-            return token; 
+
+            return new TokenDto { Token = token, Role = role }; 
         }
     }
 }

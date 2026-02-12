@@ -9,7 +9,7 @@ using static Azure.Core.HttpHeader;
 
 namespace HR.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/Department")]
     [ApiController]
     public class DepartmentController : ControllerBase
@@ -73,6 +73,7 @@ namespace HR.Controllers
             }
         }
 
+        [Authorize(Roles = "HR, Admin")]
         [HttpPost("Add")]
         public IActionResult Add([FromBody] SaveDepartmentDto departmentDto)
         {
@@ -97,6 +98,8 @@ namespace HR.Controllers
                 return BadRequest(ex.Message); // 400
             }
         }
+
+        [Authorize(Roles = "HR, Admin")]
         [HttpPut("Update")]
         public IActionResult Update([FromBody] SaveDepartmentDto department)
         {
@@ -120,7 +123,7 @@ namespace HR.Controllers
                 return BadRequest(ex.Message); // 400
             }
         }
-
+        [Authorize(Roles = "HR, Admin")]
         [HttpDelete("Delete")]
         public IActionResult Delete([FromQuery] long id)
         {
@@ -130,6 +133,10 @@ namespace HR.Controllers
 
                 if (data == null)
                     return BadRequest("Shaker");
+                var employeeAssociations = _dbContext.Employees.FirstOrDefault(e => e.DepartmentId == id);
+
+                if (employeeAssociations != null)
+                    return BadRequest(new Exception("Department with assigned employees cannot be deleted.")); // Department has employees
 
                 _dbContext.Departments.Remove(data);
                 _dbContext.SaveChanges();

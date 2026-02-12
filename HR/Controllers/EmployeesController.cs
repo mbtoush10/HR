@@ -73,6 +73,7 @@ namespace HR.Controllers
             }
         }
 
+
         [HttpGet("GetById")]// --> Query Parameter
         public IActionResult GetById(long id)
         {

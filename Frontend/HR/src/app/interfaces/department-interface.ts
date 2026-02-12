@@ -4,5 +4,5 @@ export interface Department {
   description?: string | null;
   floorNumber: number;
   typeId: number;
-  typeName: string;
+  typeName?: string;
 }
